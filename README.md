@@ -4,56 +4,47 @@
 
 This repository contains a trading bot that leverages the Alpaca API for executing trades and incorporates a machine learning sentiment analysis model to make trading decisions based on news sentiment. The bot aims to automate trading strategies by buying or selling assets on the Alpaca platform based on the sentiment of financial news.
 
-## Features
 
-1. **Alpaca API Integration:**
-   - Utilizes the Alpaca API for accessing real-time market data and executing trades.
+This code is an example of using the LumiBot library for algorithmic trading on the Alpaca trading platform. It implements a machine learning-based trading strategy using sentiment analysis on financial news headlines, with the help of the FinBERT model for sentiment estimation.
 
-2. **Sentiment Analysis:**
-   - Incorporates a machine learning sentiment analysis model to analyze financial news sentiment.
-   - Determines whether the sentiment is positive or negative, influencing trading decisions.
+Here's a breakdown of what's happening:
 
-3. **Automated Trading:**
-   - Executes buy orders when the sentiment is positive.
-   - Executes sell orders when the sentiment is negative.
+1. The required modules and libraries are imported, including the Alpaca broker, LumiBot components, and the sentiment estimation utility from the previous example.
 
-4. **Backtesting:**
-   - Provides a backtesting feature to evaluate the historical performance of the trading strategy.
-   - Allows users to simulate trading decisions based on historical market data.
+2. The Alpaca API credentials are loaded from the environment variables using the `dotenv` library.
 
-## Setup Instructions
+3. The `MLTrader` class is defined, which inherits from the `Strategy` class provided by LumiBot.
 
-### 1. Prerequisites
+4. In the `initialize` method, the trading symbol, cash-at-risk percentage, and Alpaca API instance are set up.
 
-- Python 3.x installed
-- Alpaca API key and secret (sign up at [Alpaca](https://alpaca.markets/))
-- Necessary Python packages installed (install with `pip install -r requirements.txt`)
+5. The `position_sizing` method calculates the available cash, the last price of the trading symbol, and the quantity of shares to trade based on the cash-at-risk percentage.
 
-### 2. Configuration
+6. The `get_dates` method retrieves the current date and the date three days prior, which will be used to fetch news headlines.
 
-- Replace placeholders in the `config.py` file with your Alpaca API key and secret.
-- Configure other parameters, such as trading symbols, sentiment model, etc.
+7. The `get_sentiment` method fetches news headlines for the trading symbol from the Alpaca API, passes them to the `estimate_sentiment` function, and returns the sentiment probability and label.
+
+8. The `on_trading_iteration` method is the main trading logic. It performs the following steps:
+   a. Calculates the available cash, last price, and quantity of shares.
+   b. Gets the sentiment probability and label using the `get_sentiment` method.
+   c. Checks if there is enough cash to trade and if the sentiment probability is high enough (above 0.999).
+   d. If the sentiment is positive and the probability is high, it creates a buy order with a take-profit and stop-loss order.
+   e. If the sentiment is negative and the probability is high, it creates a sell order with a take-profit and stop-loss order.
+   f. Submits the order and updates the `last_trade` status.
+
+9. The backtest is set up with the `MLTrader` strategy, the Alpaca broker, and the specified start and end dates (2020-01-01 to 2023-12-31).
+
+10. The backtest is run using the `YahooDataBacktesting` data source and the specified parameters.
+
+11. The commented-out code at the end suggests how to create a `Trader` instance, add the strategy, and run it in live trading mode.
+
+This code demonstrates how to integrate machine learning models (like FinBERT for sentiment analysis) into an algorithmic trading strategy using the LumiBot library and the Alpaca trading platform. It showcases the process of fetching news data, estimating sentiment, and executing trades based on the sentiment analysis results.
 
 ### 3. Running the Bot
 
 - Execute the main bot script: `python trading_bot.py`
 - The bot will fetch real-time market data, perform sentiment analysis on news, and execute trades accordingly.
 
-## Backtesting
 
-### 1. Historical Data
-
-- Obtain historical market data for the desired trading period.
-
-### 2. Configure Backtesting
-
-- Set the backtesting flag in `config.py` to `True`.
-- Provide the historical data file path and other necessary parameters.
-
-### 3. Run Backtest
-
-- Execute the backtesting script: `python backtest.py`
-- Review the backtest results, including simulated trades and performance metrics.
 
 ## Disclaimer
 
