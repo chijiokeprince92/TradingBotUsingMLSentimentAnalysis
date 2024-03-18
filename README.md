@@ -39,6 +39,33 @@ Here's a breakdown of what's happening:
 
 This code demonstrates how to integrate machine learning models (like FinBERT for sentiment analysis) into an algorithmic trading strategy using the LumiBot library and the Alpaca trading platform. It showcases the process of fetching news data, estimating sentiment, and executing trades based on the sentiment analysis results.
 
+### Sentiment Analysis Section (fnbert_utils.py)
+
+This code is using the Hugging Face Transformers library to load a pre-trained FinBERT model (a variant of BERT trained on financial data) and use it for sentiment analysis on financial news text.
+
+Here's a breakdown of what's happening:
+
+1. The necessary modules from the transformers library (`AutoTokenizer` and `AutoModelForSequenceClassification`) and PyTorch are imported.
+
+2. The code checks if a CUDA-enabled GPU is available and assigns the appropriate device (`"cuda:0"` or `"cpu"`).
+
+3. The `AutoTokenizer` and `AutoModelForSequenceClassification` are loaded from the pre-trained "ProsusAI/finbert" model.
+
+4. A list of labels for the sentiment classes is defined: `["positive", "negative", "neutral"]`.
+
+5. The `estimate_sentiment` function is defined. It takes a news text as input and performs the following steps:
+   a. If the input text is not empty, it tokenizes the text using the loaded tokenizer and sends the input to the specified device.
+   b. The tokenized input is passed through the loaded model, and the logits (raw output values) are obtained.
+   c. The logits are passed through a softmax function to obtain the probabilities for each class.
+   d. The class with the highest probability is determined, and the corresponding probability value and sentiment label are returned.
+   e. If the input text is empty, it returns a probability of 0 and the "neutral" label.
+
+6. In the `if __name__ == "__main__":` block, the `estimate_sentiment` function is called with a list of two news texts, and the resulting probabilities and sentiment labels are printed.
+
+7. Finally, it prints whether a CUDA-enabled GPU is available or not using `torch.cuda.is_available()`.
+
+This code demonstrates how to use a pre-trained transformer model for sequence classification tasks, in this case, sentiment analysis on financial news text. The FinBERT model has been fine-tuned on financial data, which should improve its performance on domain-specific tasks compared to a general-purpose model like BERT.
+
 ### 3. Running the Bot
 
 - Execute the main bot script: `python trading_bot.py`
